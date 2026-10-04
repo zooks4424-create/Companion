@@ -1,3 +1,4 @@
+https://zooks4424-create.github.io/Companion/
 Companion v.0.01
 
 Companion is an AI chatbot that specializes in character roleplay, it contains 12 characters, 6 male, 6 female.
