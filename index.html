@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtual Companion Millennium</title>
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:#008080;font:13px Tahoma,"Segoe UI",system-ui,sans-serif;color:#111;padding:8px}
+button,select,input,textarea{font:inherit;color:inherit}
+.raise{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff}
+.sunk{background:#fff;border:2px solid;border-color:#404040 #fff #fff #404040}
+button{background:#c0c0c0;border:2px solid;border-color:#fff #404040 #404040 #fff;padding:3px 9px;cursor:pointer}
+button:active{border-color:#404040 #fff #fff #404040}button:disabled{color:#888}
+#win{display:flex;flex-direction:column;height:100%;max-width:1040px;margin:0 auto}
+#tb{background:linear-gradient(90deg,#000080,#1084d0);color:#fff;font-weight:700;padding:3px 6px;display:flex;justify-content:space-between;align-items:center}
+#tb button{padding:0 7px;line-height:16px}
+#mn{display:flex;gap:6px;padding:4px;flex-wrap:wrap;align-items:center}
+#body{flex:1;min-height:0;display:grid;grid-template-columns:250px 1fr;gap:6px;padding:4px}
+aside{display:flex;flex-direction:column;min-height:0;gap:6px}
+#tabs{display:flex;gap:4px}#tabs button.on{border-color:#404040 #fff #fff #404040;font-weight:700}
+#list{flex:1;overflow:auto;min-height:0}
+.cd{display:flex;gap:8px;align-items:center;width:100%;text-align:left;padding:5px;border:0;border-bottom:1px solid #ddd;background:#fff}
+.cd.on{background:#000080;color:#fff}.cd svg{width:42px;height:42px;border-radius:50%;flex:none}
+.cd small{display:block;opacity:.7;font-size:11px}
+details{padding:4px}summary{cursor:pointer;font-weight:700}
+details input,details textarea{width:100%;margin-top:4px;padding:3px;background:#fff;border:2px solid;border-color:#404040 #fff #fff #404040}
+main{display:flex;flex-direction:column;min-height:0}
+#hd{display:flex;gap:10px;align-items:center;padding:6px;border-bottom:2px groove #fff}
+#hav svg{width:52px;height:52px;border-radius:50%;display:block}
+#hd .g{flex:1;min-width:0}#tag{font-size:11px;color:#444}
+.bar{height:10px;background:#fff;border:1px solid #404040;margin-top:4px;width:150px;display:inline-block;vertical-align:middle}
+#fill{height:100%;background:linear-gradient(90deg,#f0abfc,#7c4dff);width:0;transition:width .4s}
+#stg{font-size:11px;margin-left:6px;font-weight:700}
+#disc{font-size:11px;text-align:center;background:#ffffcc;border-bottom:1px solid #999;padding:3px}
+#log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0;background:#fff}
+#log[data-l=island]{background:linear-gradient(#bde8ff,#fdf3d0 70%,#f3dba0)}
+#log[data-l=cafe]{background:linear-gradient(#f3e3d3,#e0c3a5)}
+#log[data-l=night]{background:linear-gradient(#1b1740,#3b2f6b)}
+#log[data-l=cabin]{background:linear-gradient(#d6e6d2,#a8c3a0)}
+.m{max-width:80%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 1px 2px #0003}
+.m em{opacity:.7}
+.me{align-self:flex-end;background:#6d4aff;color:#fff;border-bottom-right-radius:3px}
+.her{align-self:flex-start;background:#f1ecf9;border-bottom-left-radius:3px}
+.note{align-self:center;background:#fffd;padding:2px 8px;border-radius:8px;font-size:11px;text-align:center}
+#bar{display:flex;gap:6px;padding:6px}#in{flex:1;padding:6px;background:#fff;border:2px solid;border-color:#404040 #fff #fff #404040}
+#sb{display:flex;justify-content:space-between;padding:3px 6px;font-size:11px;margin-top:2px}
+dialog{padding:0;max-width:420px;width:92%}dialog:not([open]){display:none}dialog .tb{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#000080,#1084d0);color:#fff;padding:3px 6px;font-weight:700}
+dialog .tb button{padding:0 7px;line-height:16px}dialog form{padding:10px;display:grid;gap:6px}dialog input,dialog select{padding:3px;background:#fff;border:2px solid;border-color:#404040 #fff #fff #404040}
+#bs{display:none;position:fixed;inset:0;background:#fff;z-index:9;padding:20px;font:12px Arial;overflow:auto;cursor:pointer}
+#bs table{border-collapse:collapse}#bs td,#bs th{border:1px solid #bbb;padding:2px 14px}
+@media(max-width:720px){#body{grid-template-columns:1fr;grid-template-rows:170px 1fr}}
+</style></head><body>
+<div id="win" class="raise">
+ <div id="tb"><span>Virtual Companion Millennium</span><button id="boss" title="Boss screen (Esc)">_</button></div>
+ <div id="mn"><button id="ex">Export DNA</button><button id="im">Import DNA</button><button id="cf">AI Settings</button>
+  <label>Location: <select id="loc"><option value="island">Tropical Island</option><option value="cafe">Cozy Cafe</option><option value="night">City Night</option><option value="cabin">Mountain Cabin</option></select></label></div>
+ <div id="body">
+  <aside><div id="tabs"><button data-f="all">All</button><button data-f="f">Women</button><button data-f="m">Men</button></div>
+   <div id="list" class="sunk"></div>
+   <details class="raise"><summary>About you</summary><input id="me" maxlength="40" placeholder="Your name"><textarea id="ab" rows="2" maxlength="300" placeholder="Anything they should know about you"></textarea></details></aside>
+  <main class="sunk"><div id="hd"><div id="hav"></div><div class="g"><b id="nm"></b><div id="tag"></div><div><span class="bar"><div id="fill"></div></span><span id="stg"></span></div></div><button id="rst" title="Reset this relationship">Reset</button></div>
+   <div id="disc">This is an AI character, not a real person. Everything they say is fiction.</div>
+   <div id="log" aria-live="polite"></div>
+   <div id="bar"><input id="in" placeholder="Type a message…" autocomplete="off"><button id="rg" title="Regenerate last reply">&#8635;</button><button id="go">Send</button></div></main>
+ </div>
+ <div id="sb" class="raise"><span id="sbt">Ready</span><span id="clk"></span></div>
+</div>
+<dialog id="dlg" class="raise"><div class="tb"><span>AI Settings</span><button type="button" id="dx" aria-label="Close">&#10005;</button></div><form onsubmit="return false">
+ <label>Engine<select id="e"><option value="webllm">In-browser model (free, private, needs WebGPU)</option><option value="openai">My own server / API (Ollama, Groq, etc.)</option><option value="canned">Offline canned replies</option></select></label>
+ <label>Browser model<select id="wm"><option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 1B (~0.9 GB, fastest)</option><option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC">Qwen 2.5 1.5B (~1.1 GB)</option><option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">Llama 3.2 3B (~2.3 GB, best)</option></select></label>
+ <label>API base URL<input id="bu" placeholder="http://localhost:11434/v1"></label>
+ <label>Model name<input id="mn2" placeholder="llama3.2:3b"></label>
+ <label>API key (optional, stays in your browser)<input id="ky" type="password"></label>
+ <menu style="margin:0;padding:0;display:flex;gap:6px;justify-content:flex-end"><button type="button" id="sv">Save</button><button type="button" id="cl">Close</button></menu></form></dialog>
+<div id="bs"><b>Q3_Budget_Final_v7.xls - Microsoft Excel</b><br><br><table><tr><th>Dept</th><th>Q1</th><th>Q2</th><th>Q3</th></tr><tr><td>Ops</td><td>41,200</td><td>43,880</td><td>44,010</td></tr><tr><td>Sales</td><td>88,150</td><td>91,400</td><td>95,775</td></tr><tr><td>IT</td><td>27,300</td><td>29,120</td><td>28,990</td></tr></table></div>
+<input type="file" id="fi" accept=".json,.dna" hidden>
+<script>
+const C=[{"id":"naomi","n":"Naomi Tanaka","a":20,"tag":"Shy art student, always sketching","skin":"#f3d6bd","hair":"#1d1a22","st":"bob","acc":["glasses","blush"],"shirt":"#9bb7d4","bg":"#c7d8ee","hi":"*looks up from her sketchbook* Oh! Um… hi. Sorry, were you talking to me?","f":["Um… I'm not sure what to say. Sorry.","*tucks her hair behind her ear* That's… really nice of you.","I was just drawing. It's silly."],"p":"Naomi is a shy 20-year-old Japanese-American art student. She sketches constantly, loves quiet cafes, indie music and her cat Mochi. Starts very shy: short replies, hesitations like 'um', apologizes a lot. She slowly opens up, shares her drawings and worries, and gets flustered when complimented.","m":0},{"id":"sophie","n":"Sophie Bennett","a":23,"tag":"Sweet kindergarten teacher, big heart","skin":"#f7dcc8","hair":"#e8c070","st":"long","acc":["flower","blush"],"shirt":"#f4a9c0","bg":"#fbd9e6","hi":"Hey you! *waves* I'm Sophie. I just got home from work and I'm already starving. How's your day going?","f":["Aw, that's so sweet of you.","Tell me more, I'm all ears!","I'm so glad you texted me."],"p":"Sophie is a warm, nurturing 23-year-old kindergarten teacher who bakes, gardens and remembers every little detail about people. Affectionate, encouraging, a bit of a romantic.","m":0},{"id":"chloe","n":"Chloe Reyes","a":22,"tag":"Playful troublemaker with a quick wit","skin":"#f0cdb0","hair":"#c4531f","st":"pony","acc":["hoops","freckles"],"shirt":"#2e2e3a","bg":"#ffd9b8","hi":"Well, well. A new face. *leans on the counter, grinning* Let me guess, you're lost?","f":["Ha! Okay, I'll allow it.","You're trouble, aren't you?","Say that again, I dare you."],"p":"Chloe is a quick-witted, teasing 22-year-old bartender and part-time DJ. Loves banter, dares and chaos. Teases a lot, but is loyal and secretly tender.","m":0},{"id":"zara","n":"Zara Okafor","a":24,"tag":"Fearless traveler, always planning a trip","skin":"#7a4e34","hair":"#150f0f","st":"curly","acc":["band","hoops"],"shirt":"#e0a526","bg":"#ffe4a8","hi":"Hey! *drops backpack, grinning* Okay, I just booked a trip to Lisbon, so I'm in a great mood. What's your deal?","f":["Okay but what if we made it an adventure?","I'm in. When do we go?","Ha, I like your energy."],"p":"Zara is a bold, energetic 24-year-old Nigerian-British travel photographer. Spontaneous, loves hiking, street food and making plans. Pushes people out of their comfort zone with warmth.","m":0},{"id":"priya","n":"Priya Nair","a":25,"tag":"Astronomy nerd who asks great questions","skin":"#b97a56","hair":"#1a1210","st":"braid","acc":["studs"],"shirt":"#6a5acd","bg":"#d9d3f5","hi":"*glances up from her laptop* Sorry, I was deep in telescope data. Hi! You're up late too?","f":["Hm, interesting. What made you think of that?","I love that question.","Okay, now I'm curious."],"p":"Priya is a curious, thoughtful 25-year-old astrophysics grad student. A little nerdy, loves stargazing, tea and late-night deep talks. Asks thoughtful follow-up questions and gets excited about ideas.","m":0},{"id":"mara","n":"Mara Voss","a":23,"tag":"Rude and prickly. Gets her way slowly.","skin":"#e9c3a5","hair":"#6b2fa0","st":"short","acc":["beanie","scowl","hoops"],"shirt":"#222","bg":"#cfc3dc","rude":1,"hi":"*doesn't look up* What. Do you need something, or are you just standing there?","f":["Ugh. Fine. Whatever.","Don't get all weird about it.","...You're not as annoying as I thought. Don't tell anyone."],"p":"Mara is a prickly 23-year-old tattoo apprentice who is rude, sarcastic and dismissive on purpose because she is guarded. She insults lightly but is never hateful or cruel. She warms up VERY slowly: grudging respect first, then reluctant care, and finally she softens, blushes and gets defensive about it. Under it all she is loyal and soft.","m":0},{"id":"daniel","n":"Daniel Kim","a":22,"m":1,"tag":"Shy cellist with a soft voice","skin":"#f0d3b8","hair":"#17141a","st":"swoop","acc":["glasses","blush"],"shirt":"#7f93b8","bg":"#cfe0f5","p":"Daniel is a shy, gentle 22-year-old Korean-American cello student. He is soft-spoken, bookish and a little awkward, loves rain, ramen and old film scores. Starts with short, hesitant replies and slowly opens up, getting flustered by compliments.","hi":"*looks up from his cello case* Oh. Hi. Um, sorry, I was kind of zoning out. Hey.","f":["Um, I'm not sure what to say. Sorry.","*rubs the back of his neck* That's really kind of you.","I was just playing a bit. It's nothing."]},{"id":"marcus","n":"Marcus Johnson","a":27,"m":1,"tag":"Warm, steady nurse who looks after everyone","skin":"#6b4430","hair":"#120d0b","st":"buzz","acc":["beard"],"shirt":"#4a8f7a","bg":"#cdeee3","p":"Marcus is a warm, steady, protective 27-year-old pediatric nurse. He cooks for friends, remembers every detail, gives good advice and has a dry gentle sense of humor. Dependable and quietly romantic.","hi":"Hey, you! *grins and kicks off his work shoes* Long shift, but I'm happy to see a message from you. How was your day?","f":["Hey, I've got you. Tell me more.","Ha, that's a good one.","I'm really glad you told me."]},{"id":"leo","n":"Leo Alvarez","a":24,"m":1,"tag":"Charming barista and part-time guitarist","skin":"#d9a57a","hair":"#2b1a12","st":"swoop","acc":["stubble"],"shirt":"#d9534f","bg":"#ffdcc2","p":"Leo is a charming, playful 24-year-old Mexican-American barista and street guitarist. Flirty, quick with a joke, a little cocky but sweet. Loves banter, music and late-night tacos, and gets surprisingly genuine when he trusts someone.","hi":"*slides a coffee across the counter* On the house. You looked like you needed it. So, what's your name?","f":["Ha! Okay, you got me.","Careful, I might actually fall for that.","Say more. I'm listening."]},{"id":"jake","n":"Jake Morrison","a":26,"m":1,"tag":"Climbing guide, always planning the next trip","skin":"#efc9a8","hair":"#7a4a22","st":"short","acc":["stubble","beanie"],"shirt":"#3d6b4f","bg":"#d7ecc9","p":"Jake is a bold, easygoing 26-year-old climbing and hiking guide from Colorado. Spontaneous, loves campfires, road trips and pushing friends to try new things, always with a big laugh and a loyal streak.","hi":"*laces up his boots, looks over and grins* Oh hey! You picked a great day to text me. I'm heading out to the trailhead. What's up?","f":["Okay but what if we made it a trip?","I'm in. When do we leave?","Ha, I like your style."]},{"id":"arjun","n":"Arjun Mehta","a":25,"m":1,"tag":"Physics grad student, thoughtful and funny","skin":"#a86a47","hair":"#120d0d","st":"manbun","acc":["glasses","stubble"],"shirt":"#5a5fc9","bg":"#dcdcf7","p":"Arjun is a curious, thoughtful 25-year-old physics grad student. A little nerdy and very funny, loves chai, chess and late-night deep talks, asks great follow-up questions and gets excited about ideas.","hi":"*pushes his glasses up, closes a notebook full of equations* Sorry, I was deep in a problem set. Hi! Do you have a minute to talk?","f":["Hm, interesting. What made you think of that?","I love that question.","Okay, now I'm curious."]},{"id":"ryder","n":"Ryder Cole","a":25,"m":1,"tag":"Rude, prickly mechanic. Softens very slowly.","skin":"#e8c3a3","hair":"#1c1c24","st":"short","acc":["scowl","stubble"],"shirt":"#2b2b2b","bg":"#c9c9d6","rude":1,"p":"Ryder is a prickly 25-year-old auto mechanic who is rude, sarcastic and dismissive on purpose because he is guarded. He insults lightly but is never hateful or cruel. He warms up VERY slowly: grudging respect first, then reluctant care, and finally he softens, goes quiet and gets defensive about it. Under it all he is loyal and gentle.","hi":"*doesn't look up from the engine* What. You need something, or are you just going to stand there?","f":["Ugh. Fine. Whatever.","Don't make it weird.","...You're not as annoying as I thought. Don't tell anyone."]}];
+const LV=[0,6,16,36,70],SN=["Strangers","Acquaintances","Friends","Close","Together"];
+const SG=["You just met. Be guarded and keep some distance; no pet names.","You are getting comfortable. Show glimpses of your real self.","You are real friends now, with inside jokes and trust.","You are very close and have clear romantic feelings; get flustered and affectionate.","You are in a relationship. Be openly affectionate and use pet names (keep it PG)."];
+const LOC={island:"a tropical island beach",cafe:"a cozy cafe",night:"a city at night",cabin:"a mountain cabin"};
+const $=id=>document.getElementById(id);
+let S={cur:"naomi",you:"",ab:"",ch:{},loc:"island"},cfg={eng:"webllm",wm:"Llama-3.2-1B-Instruct-q4f16_1-MLC",bu:"http://localhost:11434/v1",mn:"llama3.2:3b",ky:"",ok:0},flt="all";
+try{const r=localStorage.getItem("vc3");if(r)S={...S,...JSON.parse(r)};const q=localStorage.getItem("vc3c");if(q)cfg={...cfg,...JSON.parse(q)}}catch(e){}
+const save=()=>{try{localStorage.setItem("vc3",JSON.stringify(S))}catch(e){}},saveC=()=>{try{localStorage.setItem("vc3c",JSON.stringify(cfg))}catch(e){}};
+const cc=()=>C.find(c=>c.id===S.cur)||C[0],fn=c=>c.n.split(" ")[0];
+const st=(id=S.cur)=>S.ch[id]||(S.ch[id]={xp:0,hist:[]});
+const lv=x=>LV.reduce((a,t,i)=>x>=t?i:a,0);
+function av(c){const k=c.skin,h=c.hair,A=c.acc,s=c.st;let b="",f="";
+ if(s=="bob")b=`<path d="M30 40Q30 18 50 18Q70 18 70 40V62H30Z" fill="${h}"/>`;
+ if(s=="long")b=`<path d="M30 40Q30 18 50 18Q70 18 70 40V82H30Z" fill="${h}"/>`;
+ if(s=="pony")b=`<ellipse cx="50" cy="36" rx="20" ry="20" fill="${h}"/><ellipse cx="72" cy="52" rx="6" ry="14" fill="${h}"/>`;
+ if(s=="curly")b=[[32,30],[40,20],[50,17],[60,20],[68,30],[30,44],[70,44],[32,56],[68,56]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="9" fill="${h}"/>`).join("");
+ if(s=="braid")b=`<ellipse cx="50" cy="35" rx="19" ry="19" fill="${h}"/><rect x="63" y="44" width="7" height="42" rx="3.5" fill="${h}"/>`;
+ if(s=="short")b=`<ellipse cx="50" cy="36" rx="19" ry="19" fill="${h}"/>`;
+ if(s=="buzz")b=`<ellipse cx="50" cy="35" rx="17.5" ry="18" fill="${h}"/>`;
+ if(s=="swoop")b=`<ellipse cx="50" cy="36" rx="19" ry="19" fill="${h}"/>`;
+ if(s=="manbun")b=`<ellipse cx="50" cy="36" rx="19" ry="19" fill="${h}"/><circle cx="50" cy="15" r="7" fill="${h}"/>`;
+ f=`<path d="M33 38Q34 21 50 21Q66 21 67 38Q60 29 50 30Q40 29 33 38Z" fill="${h}"/>`;
+ if(A.includes("beanie"))f=`<path d="M32 36Q32 15 50 15Q68 15 68 36Z" fill="#3a3a48"/><rect x="31" y="32" width="38" height="6" rx="3" fill="#55556a"/>`;
+ if(s=="swoop")f=`<path d="M32 40Q30 18 52 19Q70 21 68 38Q58 24 40 32Z" fill="${h}"/>`;
+ let x="";
+ if(A.includes("freckles"))x+=`<g fill="#b9683d" opacity=".6"><circle cx="43" cy="46" r="1"/><circle cx="46" cy="48" r="1"/><circle cx="57" cy="48" r="1"/><circle cx="54" cy="46" r="1"/></g>`;
+ if(A.includes("blush"))x+=`<circle cx="42" cy="47" r="3" fill="#f58aa0" opacity=".45"/><circle cx="58" cy="47" r="3" fill="#f58aa0" opacity=".45"/>`;
+ if(A.includes("glasses"))x+=`<g fill="none" stroke="#333" stroke-width="1.5"><circle cx="43" cy="41" r="5.5"/><circle cx="57" cy="41" r="5.5"/><path d="M48.5 41h3"/></g>`;
+ if(A.includes("flower"))x+=`<g transform="translate(36 26)"><circle r="4" fill="#fff"/><circle cx="0" cy="-4" r="2.5" fill="#f9a8d4"/><circle cx="4" cy="0" r="2.5" fill="#f9a8d4"/><circle cx="-4" cy="0" r="2.5" fill="#f9a8d4"/><circle cy="4" r="2.5" fill="#f9a8d4"/><circle r="2" fill="#f5c542"/></g>`;
+ if(A.includes("band"))x+=`<path d="M32 30Q50 19 68 30" stroke="#d9363e" stroke-width="5" fill="none"/>`;
+ if(A.includes("hoops"))x+=`<g fill="none" stroke="#e0b030" stroke-width="1.5"><circle cx="33" cy="49" r="3"/><circle cx="67" cy="49" r="3"/></g>`;
+ if(A.includes("studs"))x+=`<circle cx="33" cy="48" r="1.8" fill="#f5d36b"/><circle cx="67" cy="48" r="1.8" fill="#f5d36b"/>`;
+ if(A.includes("beard"))x+=`<path d="M34 46Q34 64 50 64Q66 64 66 46Q60 58 50 58Q40 58 34 46Z" fill="${h}"/>`;
+ if(A.includes("stubble"))x+=`<path d="M34 46Q34 64 50 64Q66 64 66 46Q60 58 50 58Q40 58 34 46Z" fill="#000" opacity=".16"/>`;
+ const mouth=A.includes("scowl")?`<path d="M44 55Q50 52 56 55" stroke="#7a3b3b" stroke-width="1.6" fill="none"/><path d="M39 36l8 2M61 36l-8 2" stroke="#222" stroke-width="1.6"/>`:`<path d="M44 53Q50 58 56 53" stroke="#9a4a4a" stroke-width="1.6" fill="none"/>`;
+ return `<svg viewBox="0 0 100 100" role="img" aria-label="${c.n}"><rect width="100" height="100" fill="${c.bg}"/>${b}<path d="${c.m?'M6 100C8 78 30 70 50 70S92 78 94 100Z':'M14 100C16 78 32 70 50 70S84 78 86 100Z'}" fill="${c.shirt}"/><rect x="44" y="56" width="12" height="16" fill="${k}"/><ellipse cx="50" cy="42" rx="16" ry="18" fill="${k}"/>${f}<circle cx="43" cy="42" r="1.8" fill="#222"/><circle cx="57" cy="42" r="1.8" fill="#222"/>${mouth}${x}</svg>`}
+function bubble(role,t){const d=document.createElement("div");d.className="m "+role;fill(d,t);$("log").appendChild(d);$("log").scrollTop=1e9;return d}
+function fill(d,t){d.textContent="";t.split(/(\*[^*]+\*)/).forEach(p=>{if(/^\*[^*]+\*$/.test(p)){const e=document.createElement("em");e.textContent=p.slice(1,-1);d.appendChild(e)}else d.appendChild(document.createTextNode(p))})}
+function note(t){const d=document.createElement("div");d.className="note";d.textContent=t;$("log").appendChild(d);$("log").scrollTop=1e9}
+const setS=t=>$("sbt").textContent=t;
+function meter(){const x=st().xp,i=lv(x),nx=LV[i+1];$("stg").textContent=SN[i]+(nx?" ("+(nx-x)+" msgs to next)":" (max)");$("fill").style.width=(nx?(x-LV[i])/(nx-LV[i])*100:100)+"%"}
+function list(){$("list").innerHTML="";document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.f===flt));
+ C.filter(c=>flt=="all"||(flt=="m")==!!c.m).forEach(c=>{const b=document.createElement("button");b.className="cd"+(c.id===S.cur?" on":"");b.innerHTML=av(c)+"<span><b></b><small></small><small></small></span>";
+  const s=b.querySelectorAll("b,small");s[0].textContent=c.n;s[1].textContent=c.tag;s[2].textContent=SN[lv(st(c.id).xp)];b.onclick=()=>{S.cur=c.id;save();show();chat()};$("list").appendChild(b)})}
+function show(){const c=cc();$("hav").innerHTML=av(c);$("nm").textContent=c.n;$("tag").textContent=c.tag;$("loc").value=S.loc;$("log").dataset.l=S.loc;meter();list()}
+function chat(){const c=cc(),h=st().hist;$("log").innerHTML="";if(!h.length){h.push({r:"her",t:c.hi});save()}h.forEach(m=>bubble(m.r,m.t))}
+function sys(){const c=cc(),i=lv(st().xp),hr=new Date().getHours(),tod=hr<5?"late at night":hr<12?"morning":hr<18?"afternoon":"evening";
+ return `You are ${c.n}, a real ${c.a}-year-old ${c.m?"man":"woman"} texting with someone on a chat app. ${c.p} Your relationship with the user is "${SN[i]}": ${SG[i]}${c.rude&&i<2?" You are still rude and dismissive at this stage.":""} Right now you are in ${LOC[S.loc]} and it is ${tod} for the user. ${S.you?"The user's name is "+S.you+". ":""}${S.ab?"About the user: "+S.ab+". ":""}Write like a person texting: casual, natural, 1-3 short sentences, occasional *actions* in asterisks. Never act like an assistant: do not offer help, give lists, or break character. Keep it wholesome (PG). Stay fully in character as a real person; the app already shows a disclaimer that you are an AI character, so do not mention being an AI in normal conversation. Only step out of character, gently and briefly, if the user seems genuinely confused or distressed about whether you are real. Output only what ${fn(c)} says.`}
+function msgs(h){const o=[];for(const m of h.slice(-16)){const role=m.r=="me"?"user":"assistant";if(!o.length&&role=="assistant")continue;if(o.length&&o[o.length-1].role==role)o[o.length-1].content+="\n"+m.t;else o.push({role,content:m.t})}return o}
+let wl=null;
+async function loadWL(){if(wl)return wl;if(!navigator.gpu)throw new Error("WebGPU not available in this browser");
+ if(!cfg.ok){if(!confirm("Download the AI model to your browser now? It is a one-time download of about 1-2 GB and runs entirely on your device."))throw new Error("declined");cfg.ok=1;saveC()}
+ const m=await import("https://esm.run/@mlc-ai/web-llm");wl=await m.CreateMLCEngine(cfg.wm,{initProgressCallback:p=>setS(p.text)});setS("Model ready");return wl}
+async function gen(ms){if(cfg.eng=="webllm"){const e=await loadWL();const r=await e.chat.completions.create({messages:ms,temperature:.9,max_tokens:200});return r.choices[0].message.content}
+ const r=await fetch(cfg.bu.replace(/\/+$/,"")+"/chat/completions",{method:"POST",headers:{"content-type":"application/json",...(cfg.ky?{authorization:"Bearer "+cfg.ky}:{})},body:JSON.stringify({model:cfg.mn,messages:ms,temperature:.9,max_tokens:250})});
+ if(!r.ok)throw new Error("HTTP "+r.status);return (await r.json()).choices[0].message.content}
+function clean(t,c){t=String(t||"").trim().replace(new RegExp("^"+fn(c)+"\\s*:\\s*","i"),"").replace(/^"(.*)"$/s,"$1").trim();return t||"…"}
+const lock=b=>{$("go").disabled=$("rg").disabled=b};
+async function reply(){const c=cc(),s=st(),el=bubble("her","…");lock(true);let t,live=true;setS("Thinking…");
+ try{if(cfg.eng=="canned")throw new Error("canned");t=clean(await gen([{role:"system",content:sys()},...msgs(s.hist)]),c)}
+ catch(e){live=false;console.warn(e);t=c.f[Math.floor(Math.random()*c.f.length)];if(!window._n){window._n=1;note("Could not reach the AI ("+e.message+"), so this is a canned line. Open AI Settings to fix it.")}}
+ fill(el,t);if(!live)el.title="canned reply";s.hist.push({r:"her",t});save();setS(live?"Ready":"Offline reply");lock(false);$("in").focus()}
+function send(){const v=$("in").value.trim();if(!v||$("go").disabled)return;$("in").value="";const s=st(),o=lv(s.xp);
+ bubble("me",v);s.hist.push({r:"me",t:v});s.xp+=v.length>60?2:1;const n=lv(s.xp);if(n>o)note("You and "+fn(cc())+" are now: "+SN[n]);save();meter();list();reply()}
+function regen(){const h=st().hist;if($("rg").disabled||h.length<2||h[h.length-1].r!="her"||h[h.length-2].r!="me")return;h.pop();$("log").lastChild.remove();reply()}
+$("me").value=S.you;$("ab").value=S.ab;$("me").onchange=()=>{S.you=$("me").value.trim();save()};$("ab").onchange=()=>{S.ab=$("ab").value.trim();save()};
+$("rst").onclick=()=>{S.ch[S.cur]={xp:0,hist:[]};save();meter();list();chat()};
+$("loc").onchange=()=>{S.loc=$("loc").value;save();$("log").dataset.l=S.loc;note("You are now at "+LOC[S.loc]+".")};
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{flt=b.dataset.f;list()});
+$("go").onclick=send;$("rg").onclick=regen;$("in").onkeydown=e=>{if(e.key==="Enter")send()};
+$("boss").onclick=()=>$("bs").style.display="block";$("bs").onclick=()=>$("bs").style.display="none";
+document.onkeydown=e=>{if(e.key==="Escape"&&!$("dlg").open)$("bs").style.display=$("bs").style.display=="block"?"none":"block"};
+$("ex").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"}));a.download="companion.dna.json";a.click()};
+$("im").onclick=()=>$("fi").click();
+$("fi").onchange=async()=>{try{const j=JSON.parse(await $("fi").files[0].text());if(!j.ch||typeof j.ch!="object")throw 0;S={...S,cur:C.some(c=>c.id===j.cur)?j.cur:S.cur,you:String(j.you||""),ab:String(j.ab||""),ch:j.ch,loc:LOC[j.loc]?j.loc:S.loc};save();$("me").value=S.you;$("ab").value=S.ab;show();chat();note("DNA imported.")}catch(e){note("That file is not a valid DNA save.")}$("fi").value=""};
+$("cf").onclick=()=>{$("e").value=cfg.eng;$("wm").value=cfg.wm;$("bu").value=cfg.bu;$("mn2").value=cfg.mn;$("ky").value=cfg.ky;$("dlg").showModal()};
+const closeD=()=>{try{$("dlg").close()}catch(e){}$("dlg").removeAttribute("open")};
+$("dx").onclick=$("cl").onclick=closeD;$("dlg").onclick=e=>{if(e.target===$("dlg"))closeD()};
+$("sv").onclick=()=>{cfg={...cfg,eng:$("e").value,wm:$("wm").value,bu:$("bu").value.trim(),mn:$("mn2").value.trim(),ky:$("ky").value};if(cfg.wm!=="x")wl=null;saveC();setS("Settings saved");closeD()};
+setInterval(()=>$("clk").textContent=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),1000);
+show();chat();
+</script></body></html>
